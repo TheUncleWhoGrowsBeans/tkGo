@@ -1,0 +1,67 @@
+{
+    "editor.minimap.renderCharacters": false,
+    "editor.minimap.enabled": false,
+    "editor.fontSize": 13,
+    "git.autofetch": true,
+    "window.zoomLevel": 0,
+
+    "fileheader.configObj": {
+        "createFileTime": true,
+        "language": {
+            "languagetest": {
+            "head": "/$$",
+            "middle": " $ @",
+            "end": " $/"
+            },
+            "py": {
+                "head": "",
+                "middle": "# @",
+                "end": "",
+                "wideNum": 20,
+            }
+        },
+        "autoAdd": true,
+        "autoAddLine": 100,
+        "autoAlready": true,
+        "annotationStr": {
+            "head": "/*",
+            "middle": " * @",
+            "end": " */",
+            "use": false
+        },
+        "headInsertLine": {
+            "php": 2
+        },
+        "beforeAnnotation": {
+            "py": "#!/usr/bin/env python\n# coding=utf-8" // py文件默认，可修改
+        },
+        "afterAnnotation": {},
+        "specialOptions": {},
+        "switch": {
+            "newlineAddAnnotation": true
+        },
+        "prohibitAutoAdd": [
+            "json"
+        ],
+        "moveCursor": true,
+        "dateFormat": "YYYY-MM-DD HH:mm:ss",
+        "atSymbol": "@",
+        "atSymbolObj": {},
+        "colon": ": ",
+        "colonObj": {},
+        "showErrorMessage": false,
+        "wideSame": true,
+        "wideNum": 20,
+        "CheckFileChange": false
+    },
+
+    "fileheader.customMade": {
+        "Author": "Uncle Bean",
+        "Date": "Do not edit", // 文件创建时间(不变)
+        "LastEditors": "Uncle Bean", // 文件最后编辑者
+        "LastEditTime": "Do not edit", // 文件最后编辑时间
+        "FilePath": "no item name", // 增加此项配置即可
+        "Description": ""
+    }
+    
+}
