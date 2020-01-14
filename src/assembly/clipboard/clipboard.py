@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 14:30:58
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-14 17:07:34
+# @LastEditTime: 2020-01-14 17:15:14
 # @FilePath            : \src\assembly\clipboard\clipboard.py
 # @Description         : 
 
@@ -56,7 +56,7 @@ class Clipboard(object):
         while self.allow_listen:
             try:
                 data = self.get_data()
-                if len(data[1]) > self.max:
+                if data[1] and len(data[1]) > self.max:
                     pass
                 elif len(self.data) == 0 or str(data) != str(self.data[-1]):
                     self.print(data)
