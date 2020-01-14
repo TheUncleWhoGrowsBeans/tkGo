@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 21:49:28
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-13 22:20:39
+# @LastEditTime: 2020-01-14 16:16:42
 # @FilePath            : \src\text\scrolled_text.py
 # @Description         : 
 
@@ -31,7 +31,7 @@ class EScrolledText(ScrolledText):
         sep = kw["sep"] if "sep" in kw else " "
         end = kw["end"] if "end" in kw else "\n"
         start = kw["start"] if "start" in kw else "1.0"
-        content = sep.join(list(values))
+        content = sep.join(map(lambda x: str(x), values))
         if "with_time" in kw:
             time_cur = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             content = time_cur + kw["with_time"] + content
