@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# coding=utf-8
+
+# @Author              : Uncle Bean
+# @Date                : 2020-01-14 09:28:45
+# @LastEditors: Uncle Bean
+# @LastEditTime: 2020-01-14 10:18:04
+# @FilePath            : \src\utils\run\run_decorator.py
+# @Description         : 
+
 from functools import wraps
 from threading import Thread
 
