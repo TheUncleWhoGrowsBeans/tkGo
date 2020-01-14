@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 14:30:58
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-14 16:21:49
+# @LastEditTime: 2020-01-14 17:07:34
 # @FilePath            : \src\assembly\clipboard\clipboard.py
 # @Description         : 
 
@@ -17,7 +17,7 @@ class Clipboard(object):
     
     DATA_TYPE_FILE = "FILE"
     DATA_TYPE_TEXT = "TEXT"
-    DATA_TYPE_ERROR = "ERROR"
+    DATA_TYPE_OTHR = "OTHR"
 
     def __init__(self, num=10, max=99999, listen_invl=0.5, stdout=None):
         self.num = num
@@ -41,30 +41,31 @@ class Clipboard(object):
     def get_data(self):
         data_type = data_content = None
         self.open()
-        try:
+        if clip.IsClipboardFormatAvailable(clip.CF_HDROP):
             data_content = [file for file in clip.GetClipboardData(clip.CF_HDROP)]
             data_type = self.DATA_TYPE_FILE
-        except TypeError:
+        elif clip.IsClipboardFormatAvailable(clip.CF_UNICODETEXT):
             data_content = clip.GetClipboardData(clip.CF_UNICODETEXT).split("\r\n")
             data_type = self.DATA_TYPE_TEXT
-        except Exception as e:
-            data_content = [str(e)]
-            data_type = self.DATA_TYPE_ERROR
-            print_exc()
-        finally:
-            self.close()
+        else:
+            data_type = self.DATA_TYPE_OTHR
+        self.close()
         return (data_type, data_content)
     
     def listen(self):
         while self.allow_listen:
-            data = self.get_data()
-            if len(data[1]) > self.max:
-                pass
-            elif len(self.data) == 0 or str(data) != str(self.data[-1]):
-                self.print(data)
-                self.data.append(data)
-                if len(self.data) > self.num:
-                    del self.data[0]
+            try:
+                data = self.get_data()
+                if len(data[1]) > self.max:
+                    pass
+                elif len(self.data) == 0 or str(data) != str(self.data[-1]):
+                    self.print(data)
+                    self.data.append(data)
+                    if len(self.data) > self.num:
+                        del self.data[0]
+            except Exception as e:
+                print_exc()
+                self.print(e)
             time.sleep(self.listen_invl)
 
 
