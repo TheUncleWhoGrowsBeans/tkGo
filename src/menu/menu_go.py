@@ -4,12 +4,14 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:56:59
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-13 22:52:51
+# @LastEditTime: 2020-01-14 10:09:17
 # @FilePath            : \src\menu\menu_go.py
 # @Description         : 
 
 import time
 from menu.menu import EMenu
+from utils.run.run_decorator import ThreadRun
+from threading import Thread
 
 
 class MenuGo(EMenu):
@@ -25,6 +27,7 @@ class MenuGo(EMenu):
         self.add_command(label=self.LABEL_START, command=self.start)
         self.add_command(label=self.LABEL_END, command=self.end)
 
+    @EMenu.thread_run(LABEL_START)
     def start(self):
         self.go = True
         while self.go:
