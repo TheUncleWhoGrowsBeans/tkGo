@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 14:30:58
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-15 11:16:52
+# @LastEditTime: 2020-01-15 11:50:10
 # @FilePath            : \src\assembly\clipboard\clipboard.py
 # @Description         : 
 
@@ -84,20 +84,20 @@ class Clipboard(object):
 
     def get_data(self):
         data_type = data_content = None
-        self.open()
-        if clip.IsClipboardFormatAvailable(clip.CF_HDROP):
+        self.open()  # 打开剪贴板
+        if clip.IsClipboardFormatAvailable(clip.CF_HDROP):  # 如果是文件格式
             data_content = [file for file in clip.GetClipboardData(clip.CF_HDROP)]
             self.close()
             data_type = self.DATA_TYPE_FILE
-        elif clip.IsClipboardFormatAvailable(clip.CF_DIB):  # 图片
-            if self.dir_img:
+        elif clip.IsClipboardFormatAvailable(clip.CF_DIB):  # 如果是图片格式
+            if self.dir_img:  # 如果设置了图片目录，则将剪贴板的图片内容保存到该目录
                 data = clip.GetClipboardData(clip.CF_DIB)
                 self.close()
-                self.last_img_path = data_content = self.save_img(data)
+                self.last_img_path = data_content = self.save_img(data)  # 保存图片
             else:
                 self.close()
             data_type = self.DATA_TYPE_IMG
-        elif clip.IsClipboardFormatAvailable(clip.CF_UNICODETEXT):
+        elif clip.IsClipboardFormatAvailable(clip.CF_UNICODETEXT):  # 如果是文本格式
             data_content = clip.GetClipboardData(clip.CF_UNICODETEXT).split("\r\n")
             self.close()
             data_type = self.DATA_TYPE_TEXT
@@ -108,19 +108,19 @@ class Clipboard(object):
         return (data_type, data_content)
     
     def save_img(self, data):
-        cur_time = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-        img_dir = os.path.join(self.dir_img,cur_time.split("_")[0])
+        cur_time = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))  # 当前时间
+        img_dir = os.path.join(self.dir_img,cur_time.split("_")[0])  # 分日期存储图片
         if not os.path.exists(img_dir): os.mkdir(img_dir)
-        imt_name = "{}{}{}".format(self.IMG_NAME_PRFX, cur_time, self.IMG_NAME_SFX)
-        imt_path = os.path.join(img_dir, imt_name)
+        imt_name = "{}{}{}".format(self.IMG_NAME_PRFX, cur_time, self.IMG_NAME_SFX)  # 图片名字
+        imt_path = os.path.join(img_dir, imt_name)  # 图片具体路径
 
-        bmp_file_header = BMPFileHeader()
+        bmp_file_header = BMPFileHeader()  # 创建文件头
         ctypes.memset(ctypes.pointer(bmp_file_header), 0, BMPFileHeaderSize)
         bmp_file_header.bfType = ord('B') | (ord('M') << 8)
         bmp_file_header.bfSize = BMPFileHeaderSize + len(data)
         bmp_file_header.bfOffBits = BMPFileHeaderSize + BMPApinfogHeaderSize + ColorTableSize
         
-        with open(imt_path, 'wb') as bmp_file:
+        with open(imt_path, 'wb') as bmp_file:  # 写入图片内容
             bmp_file.write(bmp_file_header)
             bmp_file.write(data)
 
@@ -129,24 +129,24 @@ class Clipboard(object):
     def listen(self):
         while self.allow_listen:  # 是否允许监听，可通过 allow_listen 控制是否开启监听
             if not self.pause_listen:  # 是否暂停监听，可通过 pause_listen 控制是否暂停监听
-                clip_sn = clip.GetClipboardSequenceNumber()
-                if clip_sn != self.last_clip_sn:
+                clip_sn = clip.GetClipboardSequenceNumber()  # 获取剪贴板序列号
+                if clip_sn != self.last_clip_sn:  # 如果序列号和上次不一样，则代表剪贴板内容发生了变化
                     
                     try:
-                        data = self.get_data()
-                        if data[1] and len(data[1]) > self.max:
+                        data = self.get_data()  # 获取剪贴板内容
+                        if data[1] and len(data[1]) > self.max:  # 如果剪贴板内容太长，则直接跳过
                             pass
                         else:
-                            self.print(data)
-                            self.data.append(data)
-                            if len(self.data) > self.num:
+                            self.print(data)  # 输出剪贴板内容
+                            self.data.append(data)  # 将剪贴板内容存入列表
+                            if len(self.data) > self.num:  # 如果列表中储存的内容超过限定个数，则删除最早的
                                 del self.data[0]
-                        self.last_clip_sn = clip_sn
-                    except Exception as e:
+                        self.last_clip_sn = clip_sn  # 记录剪贴板序列号
+                    except Exception as e:  # 如果发生异常，则打印异常信息
                         print_exc()
                         self.print(e)
 
-                time.sleep(self.listen_invl)
+                time.sleep(self.listen_invl)  # 休眠指定时间，一般设为0.5秒就可以了
 
 
 if __name__ == "__main__":
