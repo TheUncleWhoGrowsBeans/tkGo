@@ -4,11 +4,12 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:25:38
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-14 16:03:21
+# @LastEditTime: 2020-01-15 11:08:36
 # @FilePath            : \src\root.py
 # @Description         : 
 
 import os
+import sys
 import tkinter as tk
 from tkinter import Tk
 from tkinter import Menu
@@ -21,16 +22,16 @@ class APP(Tk):
 
     LISTEN_INVL = 0.5  # 监听频率（监听间隔）
     
-    def __init__(self, title="tkGo", width=800, height=600):
+    def __init__(self):
+        
         super().__init__()
-        self.title(title)
-        self.geometry('%dx%d' % (width, height))
 
-        icon_path = os.path.join(
-            os.path.dirname(__file__),
-            r"..\resources\tkGo.ico"
-        )
-        self.iconbitmap(icon_path)
+        sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+        from resources.conf import Conf
+        Conf.check_dir_and_mkdir()  # 检查APP相关目录是否存在，若不存在则创建
+        self.title(Conf.APP_NAME)
+        self.geometry('%dx%d' % (Conf.APP_WIDTH, Conf.APP_HEIGHT))
+        self.iconbitmap(Conf.PATH_ICON)
         
         self.frame_main = FrameMain(master=self)
         self.frame_main.grid(row=0, column=0, sticky=tk.NSEW)
@@ -44,7 +45,8 @@ class APP(Tk):
 
         self.ListenerMain = ListenerMain(  # 监听器
             listen_invl=self.LISTEN_INVL,
-            stdout=self.stdout
+            stdout=self.stdout,
+            dir_clip_img=Conf.DIR["CLIP_IMG"]  # 传入图片目录则代表开启监听剪贴板的图片并持久化
         )  
         self.ListenerMain.listen()  # 开启监听
         
