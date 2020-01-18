@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 21:50:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-15 11:02:04
+# @LastEditTime: 2020-01-18 20:09:41
 # @FilePath            : \resources\conf.py
 # @Description         : 
 
@@ -21,6 +21,7 @@ class Conf(object):
     DIR = dict()
     DIR["ROOT"] = os.path.dirname(os.path.dirname(__file__))  # 项目根目录
     DIR["DATA"] = os.path.join(DIR["ROOT"], "data")  # 数据目录
+    DIR["IMG"] = os.path.join(DIR["ROOT"], "img")  # 数据目录
     DIR["TMP"] = os.path.join(DIR["ROOT"], "tmp")  # 临时目录
     DIR["CLIP"] = os.path.join(DIR["DATA"], "clip")  # 剪贴板数据目录
     DIR["CLIP_IMG"] = os.path.join(DIR["CLIP"], "img")  # 剪贴板图片目录
