@@ -4,12 +4,13 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:25:38
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-15 11:08:36
+# @LastEditTime: 2020-01-18 20:58:33
 # @FilePath            : \src\root.py
 # @Description         : 
 
 import os
 import sys
+import time
 import tkinter as tk
 from tkinter import Tk
 from tkinter import Menu
@@ -23,8 +24,10 @@ class APP(Tk):
     LISTEN_INVL = 0.5  # 监听频率（监听间隔）
     
     def __init__(self):
-        
+        self.output("tkGo")
+
         super().__init__()
+        self.output("super init")
 
         sys.path.append(os.path.dirname(os.path.dirname(__file__)))
         from resources.conf import Conf
@@ -32,23 +35,32 @@ class APP(Tk):
         self.title(Conf.APP_NAME)
         self.geometry('%dx%d' % (Conf.APP_WIDTH, Conf.APP_HEIGHT))
         self.iconbitmap(Conf.PATH_ICON)
+        self.output("basci init")
         
         self.frame_main = FrameMain(master=self)
         self.frame_main.grid(row=0, column=0, sticky=tk.NSEW)
         self.stdout = self.frame_main.frame_text_main.text_main.stdout
+        self.output("frame_main init")
 
         self.menu_main = MenuMain(  # 主菜单
             master=self, 
             tearoff=0,
-            stdout=self.stdout
+            stdout=self.stdout,
+            conf=Conf
         )
-
-        self.ListenerMain = ListenerMain(  # 监听器
+        self.output("menu_main init")
+        
+        self.Listener_main = ListenerMain(  # 监听器
             listen_invl=self.LISTEN_INVL,
             stdout=self.stdout,
-            dir_clip_img=Conf.DIR["CLIP_IMG"]  # 传入图片目录则代表开启监听剪贴板的图片并持久化
+            conf=Conf
         )  
-        self.ListenerMain.listen()  # 开启监听
+        self.Listener_main.listen()  # 开启监听
+        self.output("Listener_main init")
+    
+    def output(self, content):
+        cur_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        print(cur_time, content, sep=" -> ")
         
         
 if __name__ == "__main__":
