@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:19:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-15 16:01:12
+# @LastEditTime: 2020-01-18 20:05:56
 # @FilePath            : \src\menu\menu.py
 # @Description         : 
 
@@ -18,7 +18,8 @@ class EMenu(Menu):
     def __init__(self, *args, **kw):
         self.stdout = kw["stdout"] if "stdout" in kw else self.msg_box_info
         self.stderr = kw["stderr"] if "stderr" in kw else self.msg_box_err
-        for key in ["stdout", "stderr"]:
+        self.conf = kw["conf"] if "conf" in kw else None
+        for key in ["stdout", "stderr", "conf"]:
             if key in kw:
                 del kw[key]
         super().__init__(*args, **kw)
@@ -33,12 +34,13 @@ class EMenu(Menu):
         """
         sep = kw["sep"] if "sep" in kw else " "
         end = kw["end"] if "end" in kw else "\n"
+        title = kw["title"] if "title" in kw else "stdout"
         content = sep.join(map(lambda x: str(x), values))
         if "with_time" in kw:
             time_cur = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             content = time_cur + kw["with_time"] + content
         messagebox.showinfo(
-            title="stdout",
+            title=title,
             message=content+end
         )
 
@@ -52,12 +54,13 @@ class EMenu(Menu):
         """
         sep = kw["sep"] if "sep" in kw else " "
         end = kw["end"] if "end" in kw else "\n"
+        title = kw["title"] if "title" in kw else "stderr"
         content = sep.join(map(lambda x: str(x), values))
         if "with_time" in kw:
             time_cur = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             content = time_cur + kw["with_time"] + content
         messagebox.showerror(
-            title="stderr",
+            title=title,
             message=content+end
         )
 
