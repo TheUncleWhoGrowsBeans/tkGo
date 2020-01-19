@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 21:50:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-18 20:09:41
+# @LastEditTime: 2020-01-19 14:09:30
 # @FilePath            : \resources\conf.py
 # @Description         : 
 
@@ -14,9 +14,11 @@ import os
 class Conf(object):
     
     APP_NAME = "tkGo"
-    APP_WIDTH = 800
-    APP_HEIGHT = 600
+    APP_WIDTH = 1440
+    APP_HEIGHT = 900
     PATH_ICON = os.path.join(os.path.dirname(__file__), "tkGo.ico")
+
+    TEXT_OUTPUT_HEIGHT = 15
 
     DIR = dict()
     DIR["ROOT"] = os.path.dirname(os.path.dirname(__file__))  # 项目根目录
