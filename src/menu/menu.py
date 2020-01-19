@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:19:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-18 20:05:56
+# @LastEditTime: 2020-01-19 14:34:10
 # @FilePath            : \src\menu\menu.py
 # @Description         : 
 
@@ -34,7 +34,7 @@ class EMenu(Menu):
         """
         sep = kw["sep"] if "sep" in kw else " "
         end = kw["end"] if "end" in kw else "\n"
-        title = kw["title"] if "title" in kw else "stdout"
+        title = kw["title"] if "title" in kw else "INFO"
         content = sep.join(map(lambda x: str(x), values))
         if "with_time" in kw:
             time_cur = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
@@ -54,7 +54,7 @@ class EMenu(Menu):
         """
         sep = kw["sep"] if "sep" in kw else " "
         end = kw["end"] if "end" in kw else "\n"
-        title = kw["title"] if "title" in kw else "stderr"
+        title = kw["title"] if "title" in kw else "ERROR"
         content = sep.join(map(lambda x: str(x), values))
         if "with_time" in kw:
             time_cur = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
