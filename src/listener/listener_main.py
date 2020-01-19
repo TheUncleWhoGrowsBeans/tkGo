@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 15:54:44
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-18 19:39:01
+# @LastEditTime: 2020-01-19 14:23:50
 # @FilePath            : \src\listener\listener_main.py
 # @Description         : 
 
@@ -13,7 +13,7 @@ from assembly.clipboard.clipboard import Clipboard
 
 
 class ListenerMain(object):
-    def __init__(self, listen_invl=0.5, stdout=print, conf=None):
+    def __init__(self, listen_invl=0.5, stdout=print, stderr=print, conf=None):
         self.__threads = list()
 
         self.clipboard = Clipboard(listen_invl=listen_invl, stdout=stdout, dir_img=conf.DIR["CLIP_IMG"])  # 剪贴板监听器
