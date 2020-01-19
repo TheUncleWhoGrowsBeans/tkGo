@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-16 09:38:42
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-18 20:22:47
+# @LastEditTime: 2020-01-18 21:39:46
 # @FilePath            : \src\utils\file\excel.py
 # @Description         : 
 
@@ -52,11 +52,13 @@ class Excel(object):
         self.stdout("sheet_names ->", self.wb.sheetnames)
 
     def is_img_url(self, value: str):
+        """检测单元格值是否是图片链接
+        """
         if value.startswith("=HYPERLINK"): value = value[12:-2]  # 去掉excel超链接函数
         is_img_url = False
         if validators.url(value):  # 判断是否是url
             for img_ext in self.img_ext:
-                if value.lower().endswith(img_ext):
+                if value.lower().endswith(img_ext):  # 判断是否是图片文件后缀名
                     is_img_url = True
                     break
         return is_img_url, value
@@ -83,16 +85,23 @@ class Excel(object):
         return os.path.abspath(os.path.join(self.img_dir,img_name))
 
     def download_img(self, img_url, sheet_name=None, coordinate=None, timeout=15):
-        img_path = self.img_url_to_path(img_url)
-        if os.path.exists(img_path):
+        """图片下载
+        
+        :param img_url: 图片链接
+        :param sheet_name: ExcelSheet名称
+        :param coordinate: Excel单元格坐标
+        :param timeout: 图片下载超时时间
+        """
+        img_path = self.img_url_to_path(img_url)  # 图片保存地址
+        if os.path.exists(img_path):  # 判断图片是否已经存在
             self.stdout(sheet_name, coordinate, img_url, self.IMG_DOWNLOAD_EXISTS)
         else:
-            self.check_and_mkdir(path=img_path)
-            r = requests.get(img_url, timeout=timeout)
-            if not r.content[:4] == b'\xff\xd8\xff\xe0': 
+            self.check_and_mkdir(path=img_path)  # 判断保存图片的文件夹是否存在，不存在则创建
+            r = requests.get(img_url, timeout=timeout)  # 发起HTTP请求
+            if not r.content[:4] == b'\xff\xd8\xff\xe0':  # 判断返回内容是否是图片格式
                 self.stdout(sheet_name, coordinate, img_url, self.IMG_DOWNLOAD_ERROR, self.IMG_URL_ERROR)
                 return False
-            with open(img_path, "wb") as f:
+            with open(img_path, "wb") as f:  # 保存图片至本地
                 f.write(r.content)
             self.stdout(sheet_name, coordinate, img_url, self.IMG_DOWNLOAD_DONE)
         return True
@@ -130,26 +139,30 @@ class Excel(object):
             t.join()
     
     def add_img_of_sheet(self, sheet_name):
-        sheet = self.wb[sheet_name]
-        for row in sheet.rows:
-            for cell in row:
-                cell_value = str(cell.value)
+        """Excel中添加图片
+
+        :param sheet_name: Sheet名称
+        """
+        sheet = self.wb[sheet_name]  # 指定Sheet
+        for row in sheet.rows:  # 遍历所有行
+            for cell in row:  # 遍历单元格
+                cell_value = str(cell.value)  # 单元格值
                 is_img_url, img_url = self.is_img_url(cell_value)
-                if is_img_url:
-                    img_path = self.img_url_to_path(img_url)
-                    if os.path.exists(img_path):
+                if is_img_url:  # 如果单元格存放的是图片链接
+                    img_path = self.img_url_to_path(img_url)  # 获取图片本地保存地址
+                    if os.path.exists(img_path):  # 判断本地图片是否存在
                         try:
-                            img = openpyxl.drawing.image.Image(img_path)
-                            img.height = self.IMG_HEIGHT
-                            img.width = self.IMG_WIDTH
-                            sheet.add_image(img, cell.coordinate)
-                            sheet.row_dimensions[cell.row].height = self.IMG_CELL_HEIGHT
-                            column_letter = openpyxl.utils.get_column_letter(cell.column)
-                            sheet.column_dimensions[column_letter].width = self.IMG_CELL_WIDTH
-                            cell.alignment =  openpyxl.styles.Alignment(wrapText=True)
+                            img = openpyxl.drawing.image.Image(img_path)  # 加载图片
+                            img.height = self.IMG_HEIGHT  # 设置图片高度
+                            img.width = self.IMG_WIDTH  # 设置图片宽度
+                            sheet.add_image(img, cell.coordinate)  # 嵌入图片
+                            sheet.row_dimensions[cell.row].height = self.IMG_CELL_HEIGHT  # 设置行高
+                            column_letter = openpyxl.utils.get_column_letter(cell.column)  # 获取列名
+                            sheet.column_dimensions[column_letter].width = self.IMG_CELL_WIDTH  # 设置列宽
+                            cell.alignment =  openpyxl.styles.Alignment(wrapText=True)  # 设置单元格属性 - 自动换行
                         except Exception as e:
-                            print_exc()
-                            self.img_add_failed[img_url] = (sheet_name + " " + cell.coordinate, str(e))
+                            print_exc()  # 打印详细错误
+                            self.img_add_failed[img_url] = (sheet_name + " " + cell.coordinate, str(e))  # 记录错误信息
                             self.stdout(sheet_name, cell.coordinate, img_url, str(e))
                     else:
                         self.img_add_failed[img_url] = (sheet_name + " " + cell.coordinate, self.IMG_DOWNLOAD_NOT_EXISTS)
