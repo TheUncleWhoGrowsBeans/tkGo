@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:25:38
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-18 20:58:33
+# @LastEditTime: 2020-01-19 14:31:06
 # @FilePath            : \src\root.py
 # @Description         : 
 
@@ -35,28 +35,34 @@ class APP(Tk):
         self.title(Conf.APP_NAME)
         self.geometry('%dx%d' % (Conf.APP_WIDTH, Conf.APP_HEIGHT))
         self.iconbitmap(Conf.PATH_ICON)
-        self.output("basci init")
+        self.output("basic init")
         
-        self.frame_main = FrameMain(master=self)
+        self.columnconfigure(0, weight=1)
+        
+        self.rowconfigure(0, weight=1)
+        self.frame_main = FrameMain(master=self, conf=Conf)
         self.frame_main.grid(row=0, column=0, sticky=tk.NSEW)
-        self.stdout = self.frame_main.frame_text_main.text_main.stdout
+        self.stdout = self.frame_main.frame_output.text_stdout.stdout
+        self.stderr = self.frame_main.frame_output.text_stderr.stdout
         self.output("frame_main init")
 
         self.menu_main = MenuMain(  # 主菜单
             master=self, 
             tearoff=0,
             stdout=self.stdout,
+            stderr=self.stderr,
             conf=Conf
         )
         self.output("menu_main init")
         
-        self.Listener_main = ListenerMain(  # 监听器
+        self.listener_main = ListenerMain(  # 监听器
             listen_invl=self.LISTEN_INVL,
             stdout=self.stdout,
+            stderr=self.stderr,
             conf=Conf
         )  
-        self.Listener_main.listen()  # 开启监听
-        self.output("Listener_main init")
+        self.listener_main.listen()  # 开启监听
+        self.output("listener_main init")
     
     def output(self, content):
         cur_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))

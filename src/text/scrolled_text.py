@@ -4,11 +4,12 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 21:49:28
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-14 16:16:42
+# @LastEditTime: 2020-01-19 14:18:17
 # @FilePath            : \src\text\scrolled_text.py
 # @Description         : 
 
 import time
+import tkinter as tk
 from tkinter import INSERT
 from tkinter.scrolledtext import ScrolledText
 
@@ -16,7 +17,6 @@ from tkinter.scrolledtext import ScrolledText
 class EScrolledText(ScrolledText):
     
     def __init__(self, master=None, cnf={}, **kw):
-        
         super().__init__(master=master, cnf=cnf, **kw)
 
     def stdout(self, *values, **kw):
