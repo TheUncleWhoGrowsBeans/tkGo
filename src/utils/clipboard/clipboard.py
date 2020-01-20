@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 14:30:58
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-15 11:50:10
+# @LastEditTime: 2020-01-20 14:14:19
 # @FilePath            : \src\assembly\clipboard\clipboard.py
 # @Description         : 
 
@@ -66,8 +66,6 @@ class Clipboard(object):
         self.allow_listen = True
         self.pause_listen = False
         self.dir_img = dir_img
-        self.last_img_hex_digest = ""
-        self.last_img_path = None
 
         self.last_clip_sn = 0
     
@@ -76,42 +74,38 @@ class Clipboard(object):
             cur_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             self.stdout(cur_time, self.__class__.__name__, str(content), sep=" -> ")
 
-    def open(self):
-        clip.OpenClipboard(0)
-    
-    def close(self):
-        clip.CloseClipboard()
-
-    def get_data(self):
+    @classmethod
+    def get_data(cls, dir_img=None):
         data_type = data_content = None
-        self.open()  # 打开剪贴板
+        clip.OpenClipboard(0)  # 打开剪贴板
         if clip.IsClipboardFormatAvailable(clip.CF_HDROP):  # 如果是文件格式
             data_content = [file for file in clip.GetClipboardData(clip.CF_HDROP)]
-            self.close()
-            data_type = self.DATA_TYPE_FILE
+            clip.CloseClipboard()
+            data_type = cls.DATA_TYPE_FILE
         elif clip.IsClipboardFormatAvailable(clip.CF_DIB):  # 如果是图片格式
-            if self.dir_img:  # 如果设置了图片目录，则将剪贴板的图片内容保存到该目录
+            if dir_img:  # 如果设置了图片目录，则将剪贴板的图片内容保存到该目录
                 data = clip.GetClipboardData(clip.CF_DIB)
-                self.close()
-                self.last_img_path = data_content = self.save_img(data)  # 保存图片
+                clip.CloseClipboard()
+                data_content = cls.save_img(data=data, dir_img=dir_img)  # 保存图片
             else:
-                self.close()
-            data_type = self.DATA_TYPE_IMG
+                clip.CloseClipboard()
+            data_type = cls.DATA_TYPE_IMG
         elif clip.IsClipboardFormatAvailable(clip.CF_UNICODETEXT):  # 如果是文本格式
             data_content = clip.GetClipboardData(clip.CF_UNICODETEXT).split("\r\n")
-            self.close()
-            data_type = self.DATA_TYPE_TEXT
+            clip.CloseClipboard()
+            data_type = cls.DATA_TYPE_TEXT
         else:
-            self.close()
-            data_type = self.DATA_TYPE_OTHR
+            clip.CloseClipboard()
+            data_type = cls.DATA_TYPE_OTHR
         
         return (data_type, data_content)
     
-    def save_img(self, data):
+    @classmethod
+    def save_img(cls, data, dir_img):
         cur_time = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))  # 当前时间
-        img_dir = os.path.join(self.dir_img,cur_time.split("_")[0])  # 分日期存储图片
+        img_dir = os.path.join(dir_img,cur_time.split("_")[0])  # 分日期存储图片
         if not os.path.exists(img_dir): os.mkdir(img_dir)
-        imt_name = "{}{}{}".format(self.IMG_NAME_PRFX, cur_time, self.IMG_NAME_SFX)  # 图片名字
+        imt_name = "{}{}{}".format(cls.IMG_NAME_PRFX, cur_time, cls.IMG_NAME_SFX)  # 图片名字
         imt_path = os.path.join(img_dir, imt_name)  # 图片具体路径
 
         bmp_file_header = BMPFileHeader()  # 创建文件头
@@ -133,7 +127,7 @@ class Clipboard(object):
                 if clip_sn != self.last_clip_sn:  # 如果序列号和上次不一样，则代表剪贴板内容发生了变化
                     
                     try:
-                        data = self.get_data()  # 获取剪贴板内容
+                        data = self.get_data(dir_img=self.dir_img)  # 获取剪贴板内容
                         if data[1] and len(data[1]) > self.max:  # 如果剪贴板内容太长，则直接跳过
                             pass
                         else:

@@ -4,12 +4,12 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 15:54:44
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-19 14:23:50
+# @LastEditTime: 2020-01-20 13:59:49
 # @FilePath            : \src\listener\listener_main.py
 # @Description         : 
 
 from threading import Thread
-from assembly.clipboard.clipboard import Clipboard
+from utils.clipboard.clipboard import Clipboard
 
 
 class ListenerMain(object):

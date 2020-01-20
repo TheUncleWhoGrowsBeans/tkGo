@@ -4,14 +4,14 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-17 16:57:55
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-19 14:32:54
+# @LastEditTime: 2020-01-20 14:16:39
 # @FilePath            : \src\menu\menu_trans.py
 # @Description         : 
 
 import os
 from menu.menu import EMenu
-from assembly.excel.excel import Excel
-from utils.clip.clip import Clip
+from utils.file.excel.excel import Excel
+from utils.clipboard.clipboard import Clipboard
 
 
 class MenuTrans(EMenu):
@@ -27,8 +27,8 @@ class MenuTrans(EMenu):
 
     @EMenu.thread_run(LABEL_IMG_TO_EXCEL)
     def img_to_excel(self):
-        data_type, data_content = Clip.get_data()
-        if data_type != Clip.DATA_TYPE_FILE:
+        data_type, data_content = Clipboard.get_data()
+        if data_type != Clipboard.DATA_TYPE_FILE:
             self.msg_box_err("请先复制Excel文件", title="错误")
             return
             
