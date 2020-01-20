@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-16 09:38:42
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-18 21:39:46
+# @LastEditTime: 2020-01-20 10:03:32
 # @FilePath            : \src\utils\file\excel.py
 # @Description         : 
 
@@ -169,7 +169,7 @@ class Excel(object):
                         self.stdout(sheet_name, cell.coordinate, img_url, self.IMG_DOWNLOAD_NOT_EXISTS)
                         
     def save(self, path):
-        self.wb.save(filename=path)
+        self.wb.save(filename=path)  # 保存Excel文件
         
     def add_img_of_wb(self):
         threads = list()
@@ -186,7 +186,7 @@ class Excel(object):
 
 
 if __name__ == "__main__":
-    excel = Excel(r"C:\easonhu\proj\jollychic\atlas\AdHoc\2020\test\test.xlsx", img_dispersed=True)
+    excel = Excel(r"test.xlsx", img_dispersed=True)
 
     # excel.download_img_of_sheet(excel.sheet_names[0])
 
