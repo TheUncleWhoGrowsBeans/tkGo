@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-20 11:06:51
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-21 13:50:53
+# @LastEditTime: 2020-01-21 14:47:13
 # @FilePath            : \src\utils\file\file.py
 # @Description         : 
 
@@ -27,6 +27,7 @@ class File(object):
 
         :param file_path: 文件完整路径
         """
+        # TODO: 增加Excel，Word，PDF等文件的内容读取
         data = None
         
         try:
