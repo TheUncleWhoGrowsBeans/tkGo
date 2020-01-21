@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:19:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-19 14:34:10
+# @LastEditTime: 2020-01-20 14:52:41
 # @FilePath            : \src\menu\menu.py
 # @Description         : 
 
@@ -12,6 +12,7 @@ from tkinter import messagebox, Menu, NORMAL, DISABLED
 from functools import wraps
 from threading import Thread
 from traceback import print_exc
+from utils.output.output import Output
 
 
 class EMenu(Menu):
@@ -25,45 +26,11 @@ class EMenu(Menu):
         super().__init__(*args, **kw)
     
     def msg_box_info(self, *values, **kw):
-        """信息输出
-
-        :param *values: 信息内容
-        :param sep: 信息分隔符
-        :param end: 信息结束符
-        :param with_time: 信息是否自动添加时间，如with_time=" - "，则输出"{time} - {content}"
-        """
-        sep = kw["sep"] if "sep" in kw else " "
-        end = kw["end"] if "end" in kw else "\n"
-        title = kw["title"] if "title" in kw else "INFO"
-        content = sep.join(map(lambda x: str(x), values))
-        if "with_time" in kw:
-            time_cur = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-            content = time_cur + kw["with_time"] + content
-        messagebox.showinfo(
-            title=title,
-            message=content+end
-        )
-
+        return Output.msg_box_info(*values, **kw)
+    
     def msg_box_err(self, *values, **kw):
-        """错误输出
-
-        :param *values: 信息内容
-        :param sep: 信息分隔符
-        :param end: 信息结束符
-        :param with_time: 信息是否自动添加时间，如with_time=" - "，则输出"{time} - {content}"
-        """
-        sep = kw["sep"] if "sep" in kw else " "
-        end = kw["end"] if "end" in kw else "\n"
-        title = kw["title"] if "title" in kw else "ERROR"
-        content = sep.join(map(lambda x: str(x), values))
-        if "with_time" in kw:
-            time_cur = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-            content = time_cur + kw["with_time"] + content
-        messagebox.showerror(
-            title=title,
-            message=content+end
-        )
-
+        return Output.msg_box_err(*values, **kw)
+        
     def thread_run(label_name):
         def run_decorator(f):
             def wrapped_f(self, *args, **kw):
@@ -73,7 +40,7 @@ class EMenu(Menu):
                         f(self, *args, **kw)
                     except Exception as e:
                         print_exc()
-                        self.stderr(e)
+                        self.msg_box_err(str(e))
                     self.entryconfig(label_name, state=NORMAL)
                 t = Thread(target=call)
                 t.start()
