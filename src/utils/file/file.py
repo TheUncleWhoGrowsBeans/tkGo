@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-20 11:06:51
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-21 14:47:13
+# @LastEditTime: 2020-02-04 10:45:05
 # @FilePath            : \src\utils\file\file.py
 # @Description         : 
 
@@ -75,7 +75,7 @@ class File(object):
                 if re.search(file_name_pattern, file, re.I):  # 判断文件名是否满足模糊匹配规则
                     try:
                         data = self.get_file_data(file_path=file_path)  # 获取文件数据
-                    except UnicodeDecodeError:
+                    except UnicodeDecodeError as e:
                         stderr(file_path, str(e))  # 输出异常信息（编码问题）
                         continue
                     except PermissionError as e:
