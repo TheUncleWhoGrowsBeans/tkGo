@@ -33,7 +33,7 @@
             "php": 2
         },
         "beforeAnnotation": {
-            "py": "#!/usr/bin/env python\n# coding=utf-8" // py文件默认，可修改
+            "py": "#!python\n# coding=utf-8" // py文件默认，可修改
         },
         "afterAnnotation": {},
         "specialOptions": {},
