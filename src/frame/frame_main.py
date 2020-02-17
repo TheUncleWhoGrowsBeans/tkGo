@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 17:29:18
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-19 17:24:59
+# @LastEditTime: 2020-02-05 21:13:44
 # @FilePath            : \src\frame\frame_main.py
 # @Description         : 
 
@@ -13,13 +13,12 @@ from tkinter import ttk
 from tkinter import NSEW, VERTICAL
 from frame.frame import EFrame
 from frame.frame_text_main import FrameTextMain
+from frame.frame_editor.frame_editor import FrameEditor
 from frame.frame_button_main import FrameButtonMain
 from frame.frame_output import FrameOutput
 
 
 class FrameMain(EFrame):
-
-    FRAME_TEXT_MAIN_NAME = "Text Main"
 
     def __init__(self, master=None, cnf={}, **kw):
 
@@ -40,8 +39,11 @@ class FrameMain(EFrame):
             )  
         self.paned_win_v.add(self.frame_output, weight=1)  # 往推拉窗中添加frame_output组件，并设置权重
 
-        self.frame_text_main = FrameTextMain(  # 创建放置text_main的Frame
+        self.frame_editor = FrameEditor(  # 创建放置text_main的Frame
             master=self.paned_win_v,  # master为上面创建的垂直推拉窗  
-            text=self.FRAME_TEXT_MAIN_NAME  # 设置frame text
+            cnf=cnf, 
+            stdout=self.frame_output.text_stdout.stdout,
+            stderr=self.frame_output.text_stderr.stdout,
+            **kw  # 传入其他参数
             )
-        self.paned_win_v.add(self.frame_text_main, weight=1000)  # 往推拉窗中添加frame_output组件，并设置权重
+        self.paned_win_v.add(self.frame_editor, weight=1000)  # 往推拉窗中添加frame_editor组件，并设置权重

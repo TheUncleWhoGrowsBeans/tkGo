@@ -4,11 +4,12 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 21:50:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-19 14:09:30
+# @LastEditTime: 2020-02-05 23:15:56
 # @FilePath            : \resources\conf.py
 # @Description         : 
 
 import os
+import sys
 
 
 class Conf(object):
@@ -27,6 +28,12 @@ class Conf(object):
     DIR["TMP"] = os.path.join(DIR["ROOT"], "tmp")  # 临时目录
     DIR["CLIP"] = os.path.join(DIR["DATA"], "clip")  # 剪贴板数据目录
     DIR["CLIP_IMG"] = os.path.join(DIR["CLIP"], "img")  # 剪贴板图片目录
+
+    def __init__(self):
+        sys.path.append(os.path.dirname(__file__))
+        from treeview.conf_treeview import ConfTreeview
+        self.treeview = ConfTreeview()
+        self.treeview.DIR_BOTTOM.append(self.DIR["DATA"])
 
     @classmethod
     def check_and_mkdir(cls, path=None, dir=None, max_num_cycles=100):

@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!python
 # coding=utf-8
 
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:25:38
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-19 14:31:06
+# @LastEditTime: 2020-02-05 22:19:17
 # @FilePath            : \src\root.py
 # @Description         : 
 
@@ -31,16 +31,17 @@ class APP(Tk):
 
         sys.path.append(os.path.dirname(os.path.dirname(__file__)))
         from resources.conf import Conf
-        Conf.check_dir_and_mkdir()  # 检查APP相关目录是否存在，若不存在则创建
-        self.title(Conf.APP_NAME)
-        self.geometry('%dx%d' % (Conf.APP_WIDTH, Conf.APP_HEIGHT))
-        self.iconbitmap(Conf.PATH_ICON)
+        self.conf = Conf()
+        self.conf.check_dir_and_mkdir()  # 检查APP相关目录是否存在，若不存在则创建
+        self.title(self.conf.APP_NAME)
+        self.geometry('%dx%d' % (self.conf.APP_WIDTH, self.conf.APP_HEIGHT))
+        self.iconbitmap(self.conf.PATH_ICON)
         self.output("basic init")
         
         self.columnconfigure(0, weight=1)
         
         self.rowconfigure(0, weight=1)
-        self.frame_main = FrameMain(master=self, conf=Conf)
+        self.frame_main = FrameMain(master=self, conf=self.conf)
         self.frame_main.grid(row=0, column=0, sticky=tk.NSEW)
         self.stdout = self.frame_main.frame_output.text_stdout.stdout
         self.stderr = self.frame_main.frame_output.text_stderr.stdout
@@ -51,7 +52,7 @@ class APP(Tk):
             tearoff=0,
             stdout=self.stdout,
             stderr=self.stderr,
-            conf=Conf
+            conf=self.conf
         )
         self.output("menu_main init")
         
@@ -59,7 +60,7 @@ class APP(Tk):
             listen_invl=self.LISTEN_INVL,
             stdout=self.stdout,
             stderr=self.stderr,
-            conf=Conf
+            conf=self.conf
         )  
         self.listener_main.listen()  # 开启监听
         self.output("listener_main init")
