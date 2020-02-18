@@ -4,14 +4,27 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-20 13:45:00
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-20 13:47:33
+# @LastEditTime: 2020-02-18 13:36:13
 # @FilePath            : \src\utils\output\output.py
 # @Description         : 
 
+import pyperclip
+import win32clipboard as clip
 from tkinter import messagebox
 
 
 class Output(object):
+    @staticmethod
+    def copy(text):
+        pyperclip.copy(text)
+    
+    @staticmethod
+    def paste():
+        clip.OpenClipboard(0)
+        text = clip.GetClipboardData(clip.CF_UNICODETEXT)
+        clip.CloseClipboard()
+        return text
+        
     @staticmethod
     def msg_box_info(*values, **kw):
         """信息输出
