@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:19:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-17 22:23:12
+# @LastEditTime: 2020-02-18 13:38:17
 # @FilePath            : \src\menu\menu.py
 # @Description         : 
 
@@ -15,18 +15,12 @@ from traceback import print_exc
 from utils.output.output import Output
 
 
-class EMenu(Menu):
+class EMenu(Menu, Output):
     def __init__(self, *args, **kw):
         self.stdout = kw.pop("stdout") if "stdout" in kw else None
         self.stderr = kw.pop("stderr") if "stderr" in kw else None
         self.conf = kw.pop("conf") if "conf" in kw else None
         super().__init__(*args, **kw)
-    
-    def msg_box_info(self, *values, **kw):
-        return Output.msg_box_info(*values, **kw)
-    
-    def msg_box_err(self, *values, **kw):
-        return Output.msg_box_err(*values, **kw)
     
     @staticmethod
     def thread_run(label_name):
