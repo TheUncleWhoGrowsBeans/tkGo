@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-02-18 09:16:23
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-18 12:19:45
+# @LastEditTime: 2020-02-19 18:09:37
 # @FilePath            : \src\utils\remote\ssh.py
 # @Description         : 
 
@@ -70,3 +70,10 @@ class SSH(object):
     def exec_command(self, cmd):
         if not self.ssh: self.get_ssh()
         self.stdin, self.stdout, self.stderr = self.ssh.exec_command(cmd)
+        return self.stdout.channel.recv_exit_status()
+    
+    def output(self, stdout=print, stderr=print):
+        for line in self.stdout.readlines():
+            stdout(line)
+        for line in self.stderr.readlines():
+            stderr(line)

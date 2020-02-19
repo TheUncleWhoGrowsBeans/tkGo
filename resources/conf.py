@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 21:50:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-05 23:15:56
+# @LastEditTime: 2020-02-19 20:18:01
 # @FilePath            : \resources\conf.py
 # @Description         : 
 
@@ -31,9 +31,21 @@ class Conf(object):
 
     def __init__(self):
         sys.path.append(os.path.dirname(__file__))
-        from treeview.conf_treeview import ConfTreeview
+        from conf_treeview import ConfTreeview
         self.treeview = ConfTreeview()
         self.treeview.DIR_BOTTOM.append(self.DIR["DATA"])
+
+        try:
+            from secret.conf_impala import ConfImpala
+        except ModuleNotFoundError:
+            from conf_impala import ConfImpala
+        self.impala = ConfImpala()
+        
+        try:
+            from secret.conf_ssh import ConfSSH
+        except ModuleNotFoundError:
+            from conf_ssh import ConfSSH
+        self.ssh = ConfSSH()
 
     @classmethod
     def check_and_mkdir(cls, path=None, dir=None, max_num_cycles=100):
