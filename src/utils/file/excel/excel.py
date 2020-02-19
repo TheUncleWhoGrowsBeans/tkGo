@@ -4,8 +4,8 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-16 09:38:42
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-20 10:03:32
-# @FilePath            : \src\utils\file\excel.py
+# @LastEditTime: 2020-02-19 13:55:59
+# @FilePath            : \src\utils\file\excel\excel.py
 # @Description         : 
 
 import os
@@ -98,8 +98,16 @@ class Excel(object):
         else:
             self.check_and_mkdir(path=img_path)  # 判断保存图片的文件夹是否存在，不存在则创建
             r = requests.get(img_url, timeout=timeout)  # 发起HTTP请求
-            if not r.content[:4] == b'\xff\xd8\xff\xe0':  # 判断返回内容是否是图片格式
-                self.stdout(sheet_name, coordinate, img_url, self.IMG_DOWNLOAD_ERROR, self.IMG_URL_ERROR)
+            if r.content[:4] not in [b'\xff\xd8\xff\xe0',
+                    b'\xff\xd8\xff\xe1']:  # 判断返回内容是否是图片格式
+                self.stdout(
+                    sheet_name, 
+                    coordinate, 
+                    img_url, 
+                    self.IMG_DOWNLOAD_ERROR, 
+                    self.IMG_URL_ERROR,
+                    str(r.content[:4])
+                    )
                 return False
             with open(img_path, "wb") as f:  # 保存图片至本地
                 f.write(r.content)
