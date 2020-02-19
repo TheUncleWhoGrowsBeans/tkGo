@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-02-05 19:43:34
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-05 23:11:50
+# @LastEditTime: 2020-02-19 20:21:37
 # @FilePath            : \resources\conf_treeview.py
 # @Description         : 
 
@@ -21,7 +21,7 @@ class ConfTreeview(object):
     FILE_EXT_README_REV = ".esr"  # 逆序备注文件扩展名
     FILE_NAME_DIR_README = "readme" + FILE_EXT_README  # 文件夹备注文件名称
 
-    DIR_ICON = os.path.abspath(os.path.join(__file__, "../img"))
+    DIR_ICON = os.path.abspath(os.path.join(__file__, "../img_treeview"))
     ICONS = {
         "default": "square10.bmp",
         "dir": "dir.bmp",
