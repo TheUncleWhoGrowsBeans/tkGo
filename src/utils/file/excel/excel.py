@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-16 09:38:42
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-22 20:16:41
+# @LastEditTime: 2020-02-22 22:13:13
 # @FilePath            : \src\utils\file\excel\excel.py
 # @Description         : 
 
@@ -44,6 +44,7 @@ class Excel(object):
         self.img_dispersed = img_dispersed
         self.img_ext = list(map(lambda  x: x if x.startswith(".") else "." + x, img_ext.split(",")))  # 图片文件后缀名
         self.img_download_failed = dict()
+        self.img_download_stop = False
         self.img_add_failed = dict()
         self.path = path
         
@@ -227,8 +228,10 @@ class Excel(object):
     def download_imgs(self, try_num):
         while not self.queue.empty():
             sheet_name, cell_coordinate, img_url = self.queue.get()
+            if self.img_download_stop: continue
             try_id = 0
             while try_id < try_num:
+                if self.img_download_stop: break
                 try:
                     try_id += 1
                     if not self.download_img(img_url, sheet_name, cell_coordinate): 
@@ -241,6 +244,7 @@ class Excel(object):
     
     def start_download_of_wb(self, thread_num=5, try_num=3):
         self.get_url_of_wb()
+        self.img_download_stop = False
         threads = [Thread(target=self.download_imgs, args=(try_num,)) for i in range(thread_num)]
         for t in threads:
             t.setDaemon(True)
@@ -248,11 +252,6 @@ class Excel(object):
         for t in threads:
             t.join()
 
+    def stop_download_of_wb(self):
+        self.img_download_stop = True
 
-if __name__ == "__main__":
-    excel = Excel(r"test.xlsx", img_dispersed=True)
-
-    # excel.download_img_of_sheet(excel.sheet_names[0])
-
-    excel.download_img_of_wb()
-    excel.add_img_of_wb()
