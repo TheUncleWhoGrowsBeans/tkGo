@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-17 16:57:55
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-01-20 14:16:39
+# @LastEditTime: 2020-02-22 20:02:29
 # @FilePath            : \src\menu\menu_trans.py
 # @Description         : 
 
@@ -40,17 +40,17 @@ class MenuTrans(EMenu):
                 img_dispersed=True, 
                 stdout=self.stdout
                 )
-            excel.download_img_of_wb()
+            excel.start_download_of_wb(thread_num=4)
             if len(excel.img_download_failed) > 0:
-                error_info.append((file, excel.img_download_failed, "download_failed"))
+                error_info.append((file, excel.img_download_failed, "图片下载失败"))
             excel.add_img_of_wb()
             if len(excel.img_add_failed) > 0:
-                error_info.append((file, excel.img_add_failed, "add_failed"))
+                error_info.append((file, excel.img_add_failed, "图片嵌入失败"))
         
         if len(error_info) > 0:
             for error in error_info:
                 self.stderr(error[0], error[2])
                 for key, value in error[1].items():
-                    self.stderr(key, value)
+                    self.stderr(" -> ", key, value)
         
         self.msg_box_info(self.LABEL_IMG_TO_EXCEL, "Finish")
