@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-16 09:38:42
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-22 22:13:13
+# @LastEditTime: 2020-02-22 22:41:41
 # @FilePath            : \src\utils\file\excel\excel.py
 # @Description         : 
 
@@ -234,13 +234,17 @@ class Excel(object):
                 if self.img_download_stop: break
                 try:
                     try_id += 1
-                    if not self.download_img(img_url, sheet_name, cell_coordinate): 
-                        self.img_download_failed[img_url] = (sheet_name + " " + cell_coordinate, self.IMG_URL_ERROR)
+                    is_success, download_info = self.download_img(img_url, sheet_name, cell_coordinate)
+                    if not is_success: 
+                        self.img_download_failed[img_url] = (
+                            sheet_name + " " + cell_coordinate, 
+                            self.IMG_URL_ERROR + " " + download_info
+                            )
                     break
                 except Exception as e:
+                    self.stdout(try_id, img_url, self.IMG_DOWNLOAD_ERROR, str(e))
                     if try_id == try_num:
                         self.img_download_failed[img_url] = (sheet_name + " " + cell_coordinate, str(e))
-                        self.stdout(img_url, self.IMG_DOWNLOAD_ERROR, str(e))
     
     def start_download_of_wb(self, thread_num=5, try_num=3):
         self.get_url_of_wb()
