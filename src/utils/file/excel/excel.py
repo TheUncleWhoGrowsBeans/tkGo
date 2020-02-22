@@ -4,11 +4,12 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-16 09:38:42
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-19 13:55:59
+# @LastEditTime: 2020-02-22 20:16:41
 # @FilePath            : \src\utils\file\excel\excel.py
 # @Description         : 
 
 import os
+import queue
 import requests
 import openpyxl
 import validators
@@ -27,7 +28,8 @@ class Excel(object):
     IMG_WIDTH = 120
     IMG_CELL_HEIGHT = 90
     IMG_CELL_WIDTH = 15
-
+    IMG_FILE_HEAD = [b'\xff\xd8\xff\xdb', b'\xff\xd8\xff\xe0', b'\xff\xd8\xff\xe1']
+         
     def __init__(self, path, img_dir="", img_dispersed=True, img_ext="png,jpg,jpeg", stdout=print):
         """Excel小工具
 
@@ -50,6 +52,14 @@ class Excel(object):
 
         self.stdout("img_ext ->", self.img_ext)
         self.stdout("sheet_names ->", self.wb.sheetnames)
+
+        self.img_download_headers = {
+            "accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+            "accept-encoding":"gzip, deflate, br",
+            "accept-language":"zh-CN,zh;q=0.9",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"
+        }
+        self.queue = queue.Queue()
 
     def is_img_url(self, value: str):
         """检测单元格值是否是图片链接
@@ -97,9 +107,8 @@ class Excel(object):
             self.stdout(sheet_name, coordinate, img_url, self.IMG_DOWNLOAD_EXISTS)
         else:
             self.check_and_mkdir(path=img_path)  # 判断保存图片的文件夹是否存在，不存在则创建
-            r = requests.get(img_url, timeout=timeout)  # 发起HTTP请求
-            if r.content[:4] not in [b'\xff\xd8\xff\xe0',
-                    b'\xff\xd8\xff\xe1']:  # 判断返回内容是否是图片格式
+            r = requests.get(img_url, timeout=timeout, headers=self.img_download_headers)  # 发起HTTP请求
+            if r.content[:4] not in self.IMG_FILE_HEAD:  # 判断返回内容是否是图片格式
                 self.stdout(
                     sheet_name, 
                     coordinate, 
@@ -108,11 +117,11 @@ class Excel(object):
                     self.IMG_URL_ERROR,
                     str(r.content[:4])
                     )
-                return False
+                return False, str(r.content[:4])
             with open(img_path, "wb") as f:  # 保存图片至本地
                 f.write(r.content)
             self.stdout(sheet_name, coordinate, img_url, self.IMG_DOWNLOAD_DONE)
-        return True
+        return True, img_path
                                     
     def download_img_of_sheet(self, sheet_name, try_num=3):
         sheet = self.wb[sheet_name]
@@ -129,8 +138,12 @@ class Excel(object):
                     while try_id < try_num:
                         try:
                             try_id += 1
-                            if not self.download_img(img_url, sheet_name, cell.coordinate): 
-                                self.img_download_failed[img_url] = (sheet_name + " " + cell.coordinate, self.IMG_URL_ERROR)
+                            is_success, download_info = self.download_img(img_url, sheet_name, cell.coordinate)
+                            if not is_success: 
+                                self.img_download_failed[img_url] = (
+                                    sheet_name + " " + cell.coordinate, 
+                                    self.IMG_URL_ERROR + " " + download_info
+                                    )
                             break
                         except Exception as e:
                             if try_id == try_num:
@@ -142,6 +155,7 @@ class Excel(object):
         for sheet_name in self.sheet_names:
             threads.append(Thread(target=self.download_img_of_sheet, args=(sheet_name,)))
         for t in threads:
+            t.setDaemon(True)
             t.start()
         for t in threads:
             t.join()
@@ -191,6 +205,48 @@ class Excel(object):
         path_split = os.path.splitext(self.path)
         path_excel_with_img = path_split[0] + ".image" + path_split[1]
         self.save(path=path_excel_with_img)
+
+    def get_url_of_sheet(self, sheet_name):
+
+        sheet = self.wb[sheet_name]
+        row_num = sheet.max_row
+        column_num = sheet.max_column
+        self.stdout(sheet_name, "row_num ->", row_num, " column_num ->", column_num)
+
+        for row in sheet.rows:
+            for cell in row:
+                cell_value = str(cell.value)
+                is_img_url, img_url = self.is_img_url(cell_value)
+                if is_img_url:
+                    self.queue.put((sheet_name, cell.coordinate, img_url))
+    
+    def get_url_of_wb(self):
+        for sheet_name in self.sheet_names:
+            self.get_url_of_sheet(sheet_name)
+    
+    def download_imgs(self, try_num):
+        while not self.queue.empty():
+            sheet_name, cell_coordinate, img_url = self.queue.get()
+            try_id = 0
+            while try_id < try_num:
+                try:
+                    try_id += 1
+                    if not self.download_img(img_url, sheet_name, cell_coordinate): 
+                        self.img_download_failed[img_url] = (sheet_name + " " + cell_coordinate, self.IMG_URL_ERROR)
+                    break
+                except Exception as e:
+                    if try_id == try_num:
+                        self.img_download_failed[img_url] = (sheet_name + " " + cell_coordinate, str(e))
+                        self.stdout(img_url, self.IMG_DOWNLOAD_ERROR, str(e))
+    
+    def start_download_of_wb(self, thread_num=5, try_num=3):
+        self.get_url_of_wb()
+        threads = [Thread(target=self.download_imgs, args=(try_num,)) for i in range(thread_num)]
+        for t in threads:
+            t.setDaemon(True)
+            t.start()
+        for t in threads:
+            t.join()
 
 
 if __name__ == "__main__":
