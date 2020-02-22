@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-02-18 13:22:47
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-20 14:26:53
+# @LastEditTime: 2020-02-21 23:17:18
 # @FilePath            : \src\menu\menu_impala.py
 # @Description         : 
 
@@ -40,7 +40,9 @@ class MenuImpala(EMenu):
             port=self.conf.ssh.SERVER_INFO["s1"]["port"],
             username=self.conf.ssh.SERVER_INFO["s1"]["user_name"],
             pkey=self.conf.ssh.SERVER_INFO["s1"]["private_key"],
-            auto_connect=False
+            auto_connect=False,
+            stdout=self.stdout,
+            stderr=self.msg_box_err
         )
 
         master.add_cascade(label=self.LABEL_NAME, menu=self)
