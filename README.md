@@ -2,7 +2,7 @@
  * @Author              : Uncle Bean
  * @Date                : 2020-01-13 23:44:00
  * @LastEditors         : Uncle Bean
- * @LastEditTime        : 2020-01-21 14:38:22
+ * @LastEditTime        : 2020-02-23 21:39:53
  * @FilePath            : \README.md
  * @Description         : 
  -->
@@ -22,6 +22,7 @@ Go to the python tkinter
 [2020-01-14【feat】：增加剪贴板监听器](https://juejin.im/post/5e245f6a5188252c6c478734)
 
 # 文章列表
+- 连接Apache Impala https://juejin.im/post/5e527b0b6fb9a07c8514286d
 - 指定目录下查找包含指定文本的文件 https://mp.weixin.qq.com/s/XTE6T0cQ2KjDBlL0iNwcqQ
 - 推拉窗的使用案例 http://toutiao.com/item/6783672540003828235/
 - 将Excel里的图片链接替换为图片 https://blog.csdn.net/qq_35921007/article/details/103989432

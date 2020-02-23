@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-02-18 13:22:47
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-21 23:17:18
+# @LastEditTime: 2020-02-23 20:36:54
 # @FilePath            : \src\menu\menu_impala.py
 # @Description         : 
 
@@ -19,7 +19,7 @@ class MenuImpala(EMenu):
 
     LABEL_NAME = "Impala"
     LABEL_NAME_INVALIDATE_METADATA = "Invalidate Metadata"
-    LABEL_NAME_COUNT_BY_DATADATE = "Count By Datadate"
+    LABEL_NAME_COUNT_BY_DAY = "Count By Day"
     LABEL_NAME_SHELL_EXPORT = "Shell Export"
 
     DESC_SSH_CMD_FAILED = "执行错误"
@@ -45,15 +45,15 @@ class MenuImpala(EMenu):
             stderr=self.msg_box_err
         )
 
-        master.add_cascade(label=self.LABEL_NAME, menu=self)
+        master.add_cascade(label=self.LABEL_NAME, menu=self)  # 添加主菜单
 
-        self.add_command(
+        self.add_command(  # 添加子菜单-刷新元数据
             label=self.LABEL_NAME_INVALIDATE_METADATA, 
             command=self.invalidate_metadata
             )
-        self.add_command(
-            label=self.LABEL_NAME_COUNT_BY_DATADATE, 
-            command=self.count_by_datadate
+        self.add_command(  # 添加子菜单-按日统计数据量
+            label=self.LABEL_NAME_COUNT_BY_DAY, 
+            command=self.count_by_day
             )
         self.add_command(
             label=self.LABEL_NAME_SHELL_EXPORT, 
@@ -120,23 +120,27 @@ class MenuImpala(EMenu):
         self.ssh.close()
         self.msg_box_info(self.DESC_SSH_DOWNLOAD_SUCCESSED + ":\n" + target_file)
 
-    @EMenu.thread_run(LABEL_NAME_COUNT_BY_DATADATE)
-    def count_by_datadate(self):
-        table_name = self.get_table_name_from_clip()
-        self.invalidate_table(table_name, auto_close=False)
+    @EMenu.thread_run(LABEL_NAME_COUNT_BY_DAY)
+    def count_by_day(self):
+        """菜单命令：按日统计数据量
+        """
+        table_name = self.get_table_name_from_clip()  # 从剪贴板中获取表名
+        self.invalidate_table(table_name, auto_close=False)  # 先刷新元数据
         
         sql = "select data_date,count(1) from {} group by data_date order by data_date desc".format(
             table_name
             )
         self.stdout(sql, with_time=" - ")
-        result = self.impala.execute(sql)
+        result = self.impala.execute(sql)  # 再按日统计数据量
         result = "\n".join([str(row) for row in result])
         self.stdout("{} -> {}".format(sql, result), with_time=" - ")
         self.msg_box_info(result)
         
     @EMenu.thread_run(LABEL_NAME_INVALIDATE_METADATA)
     def invalidate_metadata(self):
-        self.invalidate_table(self.get_table_name_from_clip())
+        """菜单命令：刷新元数据
+        """
+        self.invalidate_table(self.get_table_name_from_clip())  # 从剪贴板中获取表名，然后刷新元数据
 
     def invalidate_table(self, table_name, auto_close=True):
         sql = "invalidate metadata {}".format(table_name)
