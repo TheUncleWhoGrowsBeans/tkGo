@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-14 21:50:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-19 20:18:01
+# @LastEditTime: 2020-03-23 12:16:02
 # @FilePath            : \resources\conf.py
 # @Description         : 
 
@@ -46,6 +46,12 @@ class Conf(object):
         except ModuleNotFoundError:
             from conf_ssh import ConfSSH
         self.ssh = ConfSSH()
+
+        try:
+            from secret.conf_api import ConfAPI
+        except ModuleNotFoundError:
+            from conf_api import ConfAPI
+        self.api = ConfAPI()
 
     @classmethod
     def check_and_mkdir(cls, path=None, dir=None, max_num_cycles=100):
