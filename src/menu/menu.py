@@ -4,7 +4,7 @@
 # @Author              : Uncle Bean
 # @Date                : 2020-01-13 16:19:32
 # @LastEditors: Uncle Bean
-# @LastEditTime: 2020-02-18 13:38:17
+# @LastEditTime: 2020-02-24 18:53:46
 # @FilePath            : \src\menu\menu.py
 # @Description         : 
 
@@ -20,6 +20,7 @@ class EMenu(Menu, Output):
         self.stdout = kw.pop("stdout") if "stdout" in kw else None
         self.stderr = kw.pop("stderr") if "stderr" in kw else None
         self.conf = kw.pop("conf") if "conf" in kw else None
+        kw["tearoff"] = kw.get("tearoff", 0)
         super().__init__(*args, **kw)
     
     @staticmethod
